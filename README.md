@@ -16,14 +16,14 @@ import (
 
 func main() {
   led, err := libdcled.NewDcLed()
-  if err != nil {
-		os.Exit(1)
-	}
+    if err != nil {
+    os.Exit(1)
+  }
 
-	led.ScrollText(libdcled.NewText("Hello World", libdcled.STANDARD_FONT))
+  led.ScrollText(libdcled.NewText("Hello World", libdcled.STANDARD_FONT))
 
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	wg.Wait()
+  wg := &sync.WaitGroup{}
+  wg.Add(1)
+  wg.Wait()
 }
 ```
