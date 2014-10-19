@@ -9,10 +9,15 @@
 
 package libdcled
 
+import (
+	"time"
+)
+
 var Debug = false
 
 type DcLed struct {
 	dsp         *display
+	current     *Text
 	scroll_chan chan []Point
 	kill_scroll chan bool
 	kill_update chan bool
@@ -37,6 +42,21 @@ func NewDcLed() (*DcLed, error) {
 		scroll:      false}, nil
 }
 
+func (led *DcLed) Alarm(text *Text, duration time.Duration) {
+	old := NewText(led.current.str, STANDARD_FONT)
+	s := led.scroll
+
+	led.ScrollText(text)
+
+	time.Sleep(duration * time.Second)
+
+	if s {
+		led.ScrollText(old)
+	} else {
+		led.PrintText(old)
+	}
+}
+
 func (led *DcLed) PrintText(text *Text) {
 	if led.scroll {
 		led.kill_scroll <- true
@@ -48,6 +68,8 @@ func (led *DcLed) PrintText(text *Text) {
 
 	led.dsp.buffer.clear()
 	led.dsp.buffer.drawPoints(text.points)
+
+	led.current = text
 }
 
 func (led *DcLed) ScrollText(text *Text) {
@@ -58,6 +80,8 @@ func (led *DcLed) ScrollText(text *Text) {
 	}
 
 	led.scroll_chan <- text.points
+
+	led.current = text
 }
 
 func (led *DcLed) Kill() {

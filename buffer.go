@@ -68,7 +68,7 @@ func (buf *buffer) drawPoints(points []Point) {
 }
 
 func (buf *buffer) drawPixel(x int, y int) {
-	if x < 1 || x > 21 || y < 1 || y > 7 {
+	if x < 1 || x > LEDX || y < 1 || y > LEDY {
 		return
 	}
 

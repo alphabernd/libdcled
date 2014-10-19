@@ -18,8 +18,11 @@ import (
 )
 
 const (
-	vendor_id  = 0x1D34
-	product_id = 0x0013
+	VENDOR_ID    = 0x1D34
+	PRODUCT_ID   = 0x0013
+	LEDX         = 21
+	LEDY         = 7
+	SCROLL_SPEED = 60
 )
 
 type Point struct {
@@ -35,7 +38,7 @@ type display struct {
 func newDisplay() (*display, error) {
 	libusb.Init()
 
-	dev := libusb.Open(vendor_id, product_id)
+	dev := libusb.Open(VENDOR_ID, PRODUCT_ID)
 	if dev == nil {
 		fmt.Fprintf(os.Stderr, "%s\n", "Could not find Device")
 		return nil, errors.New("Could not find Device")
@@ -82,7 +85,7 @@ func (dsp *display) scrollDisplay(p <-chan []Point, kill chan bool) {
 	l := 0
 
 	for i := range points {
-		points[i].x += 21
+		points[i].x += LEDX
 	}
 
 	for {
@@ -93,8 +96,9 @@ func (dsp *display) scrollDisplay(p <-chan []Point, kill chan bool) {
 			}
 		case points = <-p: // new content
 			for i := range points {
-				points[i].x += 22
+				points[i].x += LEDX
 			}
+			l = 0
 		default:
 			last_x := 0
 
@@ -122,6 +126,6 @@ func (dsp *display) scrollDisplay(p <-chan []Point, kill chan bool) {
 				l = 0
 			}
 		}
-		time.Sleep(60 * time.Millisecond)
+		time.Sleep(SCROLL_SPEED * time.Millisecond)
 	}
 }
