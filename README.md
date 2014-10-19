@@ -16,7 +16,7 @@ import (
 
 func main() {
   led, err := libdcled.NewDcLed()
-    if err != nil {
+  if err != nil {
     os.Exit(1)
   }
 
