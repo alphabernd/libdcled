@@ -82,14 +82,7 @@ func (buf *buffer) drawPixel(x int, y int) {
 	pixel = pixel << uint(offset)
 	pixel = ^pixel
 
-	switch {
-	case x < 9:
-		x = 0
-	case x < 17:
-		x = 1
-	default:
-		x = 2
-	}
+	x = (x - 1) >> 3
 
 	buf.rows[y-1][x] = buf.rows[y-1][x] & pixel
 }
