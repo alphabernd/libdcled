@@ -22,18 +22,15 @@ type buffer struct {
 }
 
 func (buf *buffer) getPacket(row int) ([]byte, error) {
-	switch row {
-	case 0:
-		return []byte{buf.brightness, 0x00, buf.rows[0][2], buf.rows[0][1], buf.rows[0][0], buf.rows[1][2], buf.rows[1][1], buf.rows[1][0]}, nil
-	case 2:
-		return []byte{buf.brightness, 0x02, buf.rows[2][2], buf.rows[2][1], buf.rows[2][0], buf.rows[3][2], buf.rows[3][1], buf.rows[3][0]}, nil
-	case 4:
-		return []byte{buf.brightness, 0x04, buf.rows[4][2], buf.rows[4][1], buf.rows[4][0], buf.rows[5][2], buf.rows[5][1], buf.rows[5][0]}, nil
-	case 6:
-		return []byte{buf.brightness, 0x06, buf.rows[6][2], buf.rows[6][1], buf.rows[6][0], 0x00, 0x00, 0x00}, nil
-	default:
-		return nil, errors.New("Unknown row")
+	if row%2 == 1 || row > 6 {
+		return nil, errors.New("Not a valid row")
 	}
+
+	if row == 6 {
+		return []byte{buf.brightness, 0x06, buf.rows[row][2], buf.rows[row][1], buf.rows[row][0], 0x00, 0x00, 0x00}, nil
+	}
+
+	return []byte{buf.brightness, byte(row), buf.rows[row][2], buf.rows[row][1], buf.rows[row][0], buf.rows[row+1][2], buf.rows[row+1][1], buf.rows[row+1][0]}, nil
 }
 
 func (buf *buffer) clear() {
