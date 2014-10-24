@@ -72,19 +72,7 @@ func (buf *buffer) drawPixel(x int, y int) {
 		return
 	}
 
-	var pixel byte = 0x01
-
-	offset := (x % 8) - 1
-	if offset == -1 {
-		offset = 7
-	}
-
-	pixel = pixel << uint(offset)
-	pixel = ^pixel
-
-	x = (x - 1) >> 3
-
-	buf.rows[y-1][x] = buf.rows[y-1][x] & pixel
+	buf.rows[y-1][(x-1)>>3] &= ^(byte(0x01) << uint((x+7)%8))
 }
 
 func (buf *buffer) drawLine(x0 int, y0 int, x1 int, y1 int) {
